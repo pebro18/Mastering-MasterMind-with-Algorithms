@@ -55,17 +55,18 @@ namespace MasterMindConsole
         {
             while (Tries <= MaxTries)
             {
-                _inputCode = GetInput(); //Console.ReadLine();
+                _inputCode = GetInput();
 
                 var _feedBack = CheckCode(_inputCode);
                 FeedBack.Add(new Tuple<int, int>(_feedBack.Black, _feedBack.White));
-                Console.WriteLine("" + _feedBack.Black + " : " + _feedBack.White);
+                Console.WriteLine("Feedback: " + _feedBack.Black + " : " + _feedBack.White);
                 Tries++;
             }
         }
 
         int[] GetInput()
         {
+            // Haalt input van console moet dit zo veranderen naar een versie voor het algoritme
             Console.WriteLine("Voer in jouw code: ");
             int _input = Convert.ToInt32(Console.ReadLine());
             int[] Input = GetIntArray(_input);
@@ -89,6 +90,8 @@ namespace MasterMindConsole
 
         (int Black, int White) CheckCode(int[] UserCode)
         {
+            // Geeft feedback van de input
+            // nog niet af omdat nog issues over whites check
             int Black = 0;
             int White = 0;
             List<int> _usedIndex = new List<int>();
@@ -110,7 +113,8 @@ namespace MasterMindConsole
                         if (TheCode[i] == UserCode[j] && _usedIndex.Contains(i))
                         {
                             White++;
-                            Console.WriteLine("" + TheCode[i] +" : "+ UserCode[j]);
+                            Console.WriteLine("Index: " + i + " : " + j);
+                            Console.WriteLine("Waardes: " + TheCode[i] +" : "+ UserCode[j]);
                         }
                     }
                 }
