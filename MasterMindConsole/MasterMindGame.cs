@@ -57,9 +57,9 @@ namespace MasterMindConsole
             {
                 _inputCode = GetInput();
 
-                var _feedBack = CheckCode(_inputCode);
-                FeedBack.Add(new Tuple<int, int>(_feedBack.Black, _feedBack.White));
-                Console.WriteLine("Feedback: " + _feedBack.Black + " : " + _feedBack.White);
+                var (Black, White) = CheckCode(_inputCode);
+                FeedBack.Add(new Tuple<int, int>(Black, White));
+                Console.WriteLine("Feedback: " + Black + " : " + White);
                 Tries++;
             }
         }
