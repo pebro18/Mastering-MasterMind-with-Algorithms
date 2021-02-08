@@ -74,14 +74,17 @@ namespace MasterMindConsole
 
         int[] GetIntArray(int num)
         {
-            List<int> listOfInts = new List<int>();
-            while (num > 0)
+            string _numasstring = num.ToString();
+            int[] IntArray = new int[_numasstring.Length];
+            for (int i = 0; i < _numasstring.Length; i++)
             {
-                listOfInts.Add(num % 10);
-                num /= 10;
+                // krijgt "cannot convert from char to system.readonlyspan char" error as ik het direct van char naar int convert
+                // string -> char -> string -> int
+                // Yes i know this is stupid
+                string temp = _numasstring[i].ToString();
+                IntArray[i] = int.Parse(temp);
             }
-            listOfInts.Reverse();
-            return listOfInts.ToArray();
+            return IntArray;
         }
 
         (int Black, int White) CheckCode(int[] UserCode)
@@ -104,9 +107,10 @@ namespace MasterMindConsole
                     }
                     else
                     {
-                        if (TheCode[i] == UserCode[j] && !_usedIndex.Contains(j))
+                        if (TheCode[i] == UserCode[j] && _usedIndex.Contains(i))
                         {
                             White++;
+                            Console.WriteLine("" + TheCode[i] +" : "+ UserCode[j]);
                         }
                     }
                 }
