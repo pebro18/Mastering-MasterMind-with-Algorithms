@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MasterMindConsole
 {
     class MasterMindGame
     {
-        private bool BotGame;
-        
-        private List<int> ListOfNumbers;
+        //private bool BotGame;   
 
         private int[] TheCode;
-        public int[] InputCode;
-        
-        public int Range;
-        public int MaxTries;
+        private List<int> ListOfNumbers;
+        public int[] _inputCode;
+
+        public List<Tuple<int, int>> FeedBack;
+        public int Range = 6;
+        public int MaxTries = 10;
         public int Tries = 0;
         public int InputLimit = 4;
-        public int[,] FeedBack;
 
         static void Main()
         {
@@ -28,11 +28,7 @@ namespace MasterMindConsole
         void SetupGame(bool IsBot)
         {
             var random = new Random();
-
-            Console.WriteLine("Vul in hoeveelheid aan range: ");
-            Range = Convert.ToInt32(Console.ReadLine());
-            Console.WriteLine("Vul in max pogingen: ");
-            MaxTries = Convert.ToInt32(Console.ReadLine());
+            FeedBack = new List<Tuple<int, int>>();
             ListOfNumbers = new List<int>();
             for (int i = 0; i < Range; i++)
             {
@@ -59,10 +55,11 @@ namespace MasterMindConsole
         {
             while (Tries <= MaxTries)
             {
-                InputCode = GetInput(); //Console.ReadLine();
-                FeedBack.SetValue(CheckCode(InputCode), Tries);
+                _inputCode = GetInput(); //Console.ReadLine();
 
-                //Console.WriteLine();
+                var _feedBack = CheckCode(_inputCode);
+                FeedBack.Add(new Tuple<int, int>(_feedBack.Black, _feedBack.White));
+                Console.WriteLine("" + _feedBack.Black + " : " + _feedBack.White);
                 Tries++;
             }
         }
@@ -70,8 +67,8 @@ namespace MasterMindConsole
         int[] GetInput()
         {
             Console.WriteLine("Voer in jouw code: ");
-            int input = Convert.ToInt32(Console.ReadLine());
-            int[] Input = GetIntArray(input);
+            int _input = Convert.ToInt32(Console.ReadLine());
+            int[] Input = GetIntArray(_input);
             return Input;
         }
 
@@ -91,6 +88,7 @@ namespace MasterMindConsole
         {
             int Black = 0;
             int White = 0;
+            List<int> _usedIndex = new List<int>();
 
             for (int i = 0; i < TheCode.Length; i++)
             {
@@ -101,17 +99,22 @@ namespace MasterMindConsole
                         if (TheCode[i] == UserCode[j])
                         {
                             Black++;
+                            _usedIndex.Add(j);
                         }
                     }
                     else
                     {
-                        if (TheCode[i] == UserCode[j])
+                        if (TheCode[i] == UserCode[j] && !_usedIndex.Contains(j))
                         {
                             White++;
                         }
                     }
-
                 }
+            }
+            foreach (var item in _usedIndex)
+            {
+                Console.WriteLine(item);
+
             }
             return (Black, White);
         }

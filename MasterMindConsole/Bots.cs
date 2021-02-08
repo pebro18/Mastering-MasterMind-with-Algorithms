@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace MasterMindBots
-
 {
     class Bots
     {
