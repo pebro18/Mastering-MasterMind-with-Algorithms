@@ -1,31 +1,35 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace MasterMindConsole
 {
+    class Startup
+    {
+        static void Main()
+        {
+            var _game = new MasterMindGame();
+            var _bot = new Bots();
+            _game.SetupGame(true, _bot);
+        }
+    }
+
     class MasterMindGame
     {
-        //private bool BotGame;   
-
-        private int[] TheCode;
-        private List<int> ListOfNumbers;
-        public int[] _inputCode;
+        private Bots BotInstance;
+        private bool BotCodeBreaking;
 
         public List<Tuple<int, int>> FeedBack;
+        private List<int> ListOfNumbers;
+        private int[] SecretCode;
+        private int[] InputCode;
+
         public int Range = 6;
         public int MaxTries = 10;
         public int Tries = 0;
         public int InputLimit = 4;
 
-        static void Main()
-        {
-            var game = new MasterMindGame();
-            game.SetupGame(false);
-        }
-
-        void SetupGame(bool IsBot)
+        public void SetupGame(bool _IsBotGame, Bots _botinstance = null)
         {
             var random = new Random();
             FeedBack = new List<Tuple<int, int>>();
@@ -35,16 +39,21 @@ namespace MasterMindConsole
                 ListOfNumbers.Add(i);
             }
 
-            TheCode = new int[InputLimit];
+            SecretCode = new int[InputLimit];
             for (int i = 0; i < InputLimit; i++)
             {
                 int randindex = random.Next(ListOfNumbers.Count);
-                TheCode[i] = randindex;
+                SecretCode[i] = randindex;
             }
-
+            if (_IsBotGame)
+            {
+                BotInstance = _botinstance;
+                BotInstance.StartUp();
+                BotCodeBreaking = _IsBotGame;
+            }
             //  Check if code is assigned
             Console.WriteLine("\n");
-            foreach (var item in TheCode)
+            foreach (var item in SecretCode)
             {
                 Console.WriteLine(item);
             }
@@ -55,15 +64,15 @@ namespace MasterMindConsole
         {
             while (Tries <= MaxTries)
             {
-                _inputCode = GetInput();
+                InputCode = GetInput();
 
-                var (Black, White) = CheckCode(_inputCode);
+                var (Black, White) = CheckCode(InputCode);
                 FeedBack.Add(new Tuple<int, int>(Black, White));
                 Console.WriteLine("Feedback: " + Black + " : " + White);
                 Tries++;
             }
+            EndGame();
         }
-
         int[] GetInput()
         {
             // Haalt input van console moet dit zo veranderen naar een versie voor het algoritme
@@ -71,6 +80,16 @@ namespace MasterMindConsole
             int _input = Convert.ToInt32(Console.ReadLine());
             int[] Input = GetIntArray(_input);
             return Input;
+        }
+
+        void HumanFeedBack()
+        {
+
+        }
+
+        void EndGame()
+        {
+
         }
 
         int[] GetIntArray(int num)
@@ -91,32 +110,24 @@ namespace MasterMindConsole
         (int Black, int White) CheckCode(int[] UserCode)
         {
             // Geeft feedback van de input
-            // nog niet af omdat nog issues over whites check
-            int Black = 0;
-            int White = 0;
+            int _black = 0;
+            int _white = 0;
             List<int> _usedIndex = new List<int>();
 
-            for (int i = 0; i < TheCode.Length; i++)
+            for (int i = 0; i < SecretCode.Length; i++)
             {
-                for (int j = 0; j < UserCode.Length; j++)
+                if (SecretCode[i] == UserCode[i])
                 {
-                    if (i == j)
-                    {
-                        if (TheCode[i] == UserCode[j])
-                        {
-                            Black++;
-                            _usedIndex.Add(j);
-                        }
-                    }
-                    else
-                    {
-                        if (TheCode[i] == UserCode[j] && _usedIndex.Contains(i))
-                        {
-                            White++;
-                            Console.WriteLine("Index: " + i + " : " + j);
-                            Console.WriteLine("Waardes: " + TheCode[i] +" : "+ UserCode[j]);
-                        }
-                    }
+                    _black++;
+                    _usedIndex.Add(i);
+                }
+
+            }
+            for (int i = 0; i < SecretCode.Length; i++)
+            {
+                if (!_usedIndex.Contains(i) && SecretCode.Contains(UserCode[i]))
+                {
+                    _white++;
                 }
             }
             foreach (var item in _usedIndex)
@@ -124,7 +135,7 @@ namespace MasterMindConsole
                 Console.WriteLine(item);
 
             }
-            return (Black, White);
+            return (_black, _white);
         }
 
     }
