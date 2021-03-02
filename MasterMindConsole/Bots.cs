@@ -52,7 +52,7 @@ namespace MasterMindConsole
             foreach (var PossibleGuess in ListCombinations)
             {
                 int[] temparray = MakeArrayFromListItem(PossibleGuess);
-                Tuple<int, int> _feedbackcode = CheckCode(temparray, _secretcode);
+                Tuple<int, int> _feedbackcode = StaticFunctions.CheckCode(temparray, _secretcode);
                 if (_feedBack.Item1 == _feedbackcode.Item1 && _feedBack.Item2 == _feedbackcode.Item2)
                 {
                     _possibleNewCodes.Add(PossibleGuess);
@@ -61,8 +61,8 @@ namespace MasterMindConsole
             return _possibleNewCodes;
         }
 
-        // One step ahead method
-        List<Tuple<int, int, int, int>> OneStepAhead(Tuple<int, int> _feedBack, int[] _secretcode)
+        // worst case
+        List<Tuple<int, int, int, int>> WorstCase(Tuple<int, int> _feedBack, int[] _secretcode)
         {
             foreach (var PossibleGuess in ListCombinations)
             {
@@ -79,36 +79,6 @@ namespace MasterMindConsole
 
 
             return null;
-        }
-
-
-        // Copy of the same check code in the MasterMind class
-        // i dont have to deal with annoying inheritance so yeah
-        // i could make this into a static function
-        Tuple<int, int> CheckCode(int[] UserCode, int[] SecretCode)
-        {
-            int _black = 0;
-            int _white = 0;
-            List<int> _usedIndex = new List<int>();
-
-            for (int i = 0; i < SecretCode.Length; i++)
-            {
-                if (SecretCode[i] == UserCode[i])
-                {
-                    _black++;
-                    _usedIndex.Add(i);
-                }
-
-            }
-            for (int i = 0; i < SecretCode.Length; i++)
-            {
-                if (!_usedIndex.Contains(i) && SecretCode.Contains(UserCode[i]))
-                {
-                    _white++;
-                }
-            }
-            //Console.WriteLine("Black: " + _black + " White: " + _white);
-            return (_black, _white).ToTuple();
         }
 
         List<Tuple<int, int, int, int>> GenerateAllCombinations(int _rangeInt)

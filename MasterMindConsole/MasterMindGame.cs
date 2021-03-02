@@ -30,7 +30,7 @@ namespace MasterMindConsole
         private int[] InputCode;
 
         public int Range = 6;
-        public int MaxTries = 1000;
+        public int MaxTries = 3;
         public int Tries = 0;
         public int InputLimit = 4;
 
@@ -78,17 +78,17 @@ namespace MasterMindConsole
                 Tuple<int, int> _feedback;
                 if (BotCodeBreaking)
                 {
-                    _feedback = CheckCode(InputCode);
+                    _feedback = StaticFunctions.CheckCode(InputCode,SecretCode);
                 }
                 else
                 {
                     _feedback = HumanFeedBack();
                 }
 
+                Tries++;
                 if (_feedback.Item1 == 4) break;
                 FeedBack.Add(_feedback);
                 Console.WriteLine("Feedback: " + _feedback.Item1 + " : " + _feedback.Item2);
-                Tries++;
             }
             EndGame();
         }
@@ -114,65 +114,23 @@ namespace MasterMindConsole
             {
                 Console.WriteLine("Voer in jouw code: ");
                 int _input = Convert.ToInt32(Console.ReadLine());
-                Input = GetIntArray(_input);
+                Input = StaticFunctions.GetIntArray(_input);
             }
             return Input;
         }
 
+        Tuple<int, int> HumanFeedBack()
+        {
+            Console.WriteLine();
+            Console.ReadLine();
+            Console.WriteLine();
+            Console.ReadLine();
+            return null;
+        }
 
         void EndGame()
         {
             Console.WriteLine("Tries: " + Tries);
         }
-
-        int[] GetIntArray(int num)
-        {
-            string _numasstring = num.ToString();
-            int[] IntArray = new int[_numasstring.Length];
-            for (int i = 0; i < _numasstring.Length; i++)
-            {
-                // i get "cannot convert from char to system.readonlyspan char" error if direcly converted from char
-                // string -> char -> string -> int
-                // Yes i know this is stupid
-                string temp = _numasstring[i].ToString();
-                IntArray[i] = int.Parse(temp);
-            }
-            return IntArray;
-        }
-
-        Tuple<int, int> HumanFeedBack()
-        {
-            return null;
-        }
-
-        // Gives feedback from input
-        Tuple<int, int> CheckCode(int[] UserCode)
-        {
-            int _black = 0;
-            int _white = 0;
-            List<int> _usedIndex = new List<int>();
-
-            // checks if the nummer are correct and in the right position and adds the index to a list
-            for (int i = 0; i < SecretCode.Length; i++)
-            {
-                if (SecretCode[i] == UserCode[i])
-                {
-                    _black++;
-                    _usedIndex.Add(i);
-                }
-
-            }
-
-            // checks if the nummber is correct and checks if index exist of list
-            for (int i = 0; i < SecretCode.Length; i++)
-            {
-                if (!_usedIndex.Contains(i) && SecretCode.Contains(UserCode[i]))
-                {
-                    _white++;
-                }
-            }
-            return (_black, _white).ToTuple();
-        }
-
     }
 }
